@@ -1,0 +1,211 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link href="CSS/help.css" rel="stylesheet" />
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+        .elev {
+            animation: mymove 0.5s;
+            animation-fill-mode: forwards;
+        }
+    </style>
+</head>
+
+<body>
+    <table id="tblSinglBuilding" style="position: absolute;
+                                    bottom:0px;" 
+                                    border="0"></table>
+</body>
+<script>
+    var floors = sessionStorage.getItem("floors");
+
+    var i;
+    var td
+
+    var tblElem = document.getElementById("tblSinglBuilding");
+    var floorNum = floors;
+    for (i = 0; i < floors; i++) {
+        var tr = document.createElement('tr');
+
+        td = document.createElement('td');
+        td.setAttribute("id", "td_" + floorNum);
+        td.setAttribute("class", "floor");
+        td.setAttribute("width", "80px");
+        td.setAttribute("height", "110px");
+        td.setAttribute("style", "border-bottom-style: solid; border-bottom-width: 7px");
+
+
+       
+
+        td.innerHTML = "<button id=\"bt_" + floorNum + "\" class=\"metal linear\" style=\"transform:scale(0.6);\" " +
+                                " onclick =\"setQueue(" + floorNum + ");\">" + floorNum-- + "</button>"; 
+        
+
+        tr.appendChild(td);
+
+        //For the Elevators
+        if (i == 0) {
+            td = document.createElement('td');
+            td.setAttribute("rowspan", floors + 1);
+            td.setAttribute("id", "td_elev1");
+            td.setAttribute("style", "vertical-align:bottom;");
+            td.innerHTML = "<div id=\"divElem1\" style=\"position: relative;\" ><img src=\"Assets/elv.png\" id=\"elev1\" style=\"height: 87px; width: 87px; \" /></div>";
+            
+            tr.appendChild(td);
+
+            td = document.createElement('td');
+            td.setAttribute("rowspan", floors + 1);
+            td.setAttribute("id", "td_elev2");
+            td.setAttribute("style", "vertical-align:bottom;");
+            td.innerHTML = "<div id=\"divElem2\" style=\"position: relative;\" ><img src=\"Assets/elv.png\" id=\"elev2\" style=\"height: 87px; width: 87px; \" /></div>";
+            
+            tr.appendChild(td);
+
+            td = document.createElement('td');
+            td.setAttribute("rowspan", floors + 1);
+            td.setAttribute("id", "td_elev3");
+            td.setAttribute("style", "vertical-align:bottom;");
+            td.innerHTML = "<div id=\"divElem3\" style=\"position: relative;\" ><img src=\"Assets/elv.png\" id=\"elev3\" style=\"height: 87px; width: 87px; \" /></div>";
+            
+            tr.appendChild(td);
+            
+        }
+
+
+        tblElem.appendChild(tr);
+    }
+
+    tr = document.createElement('tr');
+        td = document.createElement('td');
+        td.setAttribute("id", "td_0");
+        td.setAttribute("class", "floor");
+        td.setAttribute("width", "80px");
+        td.setAttribute("height", "110px");
+
+       
+
+    td.innerHTML = "<button id=\"bt_0\" class=\"metal linear\"  onclick =\"setQueue(" + floorNum + ");\" style=\"transform:scale(0.6);\" >0</button>";
+    td.innerHTML = td.innerHTML + "<div id=\"div_" + floorNum-- + "\" style=\"background-color:white;width:25px;" +
+            "position: relative; top: -50px\">55</div > ";
+
+        tr.appendChild(td);
+
+
+        
+        
+    tblElem.appendChild(tr);
+
+    var posTop;
+    var currentFloor1 = 0;
+    var currentFloor2 = 0;
+    var currentFloor3 = 0;
+    var closerElevFloor = 0;
+    var targetPos;
+    var animDur;
+
+
+
+    function setQueue(floorN) {
+       
+
+        document.getElementById("bt_" + floorN).style.backgroundColor = "hsl(130, 80%, 68%)";
+      
+        moveElev(floorN, getCloserElev(floorN));
+    }
+
+
+    function getCloserElev(floorNumber) {
+
+        var diff1, diff2, diff3;
+
+        //if all the elevators are in the same floor.
+        if ((currentFloor1 == currentFloor2) && (currentFloor2 == currentFloor3))
+        {
+            return "1";
+        }
+        else
+        {
+            diff1 = NumDiff(currentFloor1, floorNumber);
+            diff2 = NumDiff(currentFloor2, floorNumber);
+            diff3 = NumDiff(currentFloor3, floorNumber);
+
+
+            if ((diff1 <= diff2) && (diff1 < diff3)) {
+                closerElevFloor = currentFloor1;
+                return "1";
+            }
+            if ((diff2 < diff1) && (diff2 <= diff3)) {
+                closerElevFloor = currentFloor2;
+                return "2";
+            }
+            if ((diff3 < diff1) && (diff3 <= diff2)) {
+                closerElevFloor = currentFloor3;
+                return "3";
+            }
+            
+        }
+    }
+
+    function NumDiff(a, b){
+        return Math.abs(a - b)
+    }
+
+    function moveElev(floorN, elevNum) {
+
+        var elev = "#divElem" + elevNum;
+
+        
+
+        posTop = floorN * 120;
+        animDur = getDuration(floorN);
+        
+        $(elev).animate({
+            top: '-' + posTop + 'px'
+        }, animDur, function () {
+            document.getElementById("bt_" + floorN).style.backgroundColor = "hsl(0,0%,90%)";
+            var obj = document.createElement("audio");
+            obj.src = "Assets/ding.mp3"; 
+
+                obj.play();
+                eval("check" + elevNum + " = false;");
+            });
+
+        switch (elevNum) {
+            case "1": currentFloor1 = floorN;
+                break;
+            case "2": currentFloor2 = floorN;
+                break;
+            case "3": currentFloor3 = floorN;
+                break;
+        }
+            
+    
+    }
+
+    var check1 = true;
+    var check2 = true;
+    var check3 = true;
+
+
+
+    function getDuration(target) {
+        var retVal;
+        if (target > closerElevFloor) {
+            retVal = (target - closerElevFloor) * 500;
+        }
+        if (closerElevFloor > target) {
+            retVal = (closerElevFloor - target) * 500;
+        }
+
+        return retVal;
+    }
+
+
+    var elem;
+    var elemTop;
+    var id;
+
+</script>
+</html>

@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<script>
+    function saveData() {
+        if (sessionStorage) {
+            sessionStorage.setItem("floors", document.getElementById("txtFloors").value);
+            sessionStorage.setItem("buildings", document.getElementById("txtBuildings").value);
+        }
+
+        parent.modal.style.display = "none";
+        parent.initPage();
+    }
+
+    
+</script>
+<body>
+    <table width="100%">
+        <tr>
+            <td>Num. Of Floors</td>
+            <td></td>
+            <td><input type="text" id="txtFloors" /></td>
+        </tr>
+        <tr>
+            <td>Num. Of Buildings</td>
+            <td></td>
+            <td><input type="text" id="txtBuildings" /></td>
+        </tr>
+        <tr>
+            <td colspan="3" align="center"><input type="button" value="Save" onclick="saveData();"/></td>
+        </tr>
+    </table>
+</body>
+<script>
+        document.getElementById("txtFloors").value = sessionStorage.getItem("floors");
+        document.getElementById("txtBuildings").value = sessionStorage.getItem("buildings");
+</script>
+</html>

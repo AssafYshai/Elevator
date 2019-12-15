@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link href="CSS/main.css" rel="stylesheet" />
+    <link href="CSS/help.css" rel="stylesheet" />
+    <link href="CSS/anim.css" rel="stylesheet" />
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<script>
+    function closeModal() {
+        modal.style.display = "none";
+        initPage();
+    }
+</script>
+<body onload="initPage();">
+    <table id="tblBuildings" style="height:100%;
+                                    width:410px;
+                                    position: absolute;
+                                    bottom:0px;"
+           border="0">
+        <tr>
+            <td>
+                <button id="myBtn">Settings</button>
+            </td>
+        </tr>
+
+        <tr id="tblRow"></tr>
+
+    </table>
+
+
+    <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+
+            <!-- span class="close">&times;X</span -->
+            <table width="100%">
+                <tr>
+                    <td></td>
+                    <td align="right" style="cursor:pointer" onclick="closeModal();">X</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <iframe src="Settings.html" style="width:100%;border-style:none"></iframe>
+                    </td>
+                </tr>
+
+            </table>
+
+        </div>
+
+    </div>
+    <!--p>
+        <input id="Text1" type="text" /></!--p-->
+</body>
+<script>
+    var modal = document.getElementById("myModal");
+    var btn = document.getElementById("myBtn");
+
+    sessionStorage.setItem("buildings", "1");
+    sessionStorage.setItem("floors", "6");
+
+
+    btn.onclick = function () {
+        modal.style.display = "block";
+    }
+
+    /*
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+    */
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+
+    var floors = sessionStorage.getItem("floors");
+    var buildings = sessionStorage.getItem("buildings");
+
+    function initPage() {
+        var i;
+        //var elem;
+
+        //var table = document.getElementById("tblBuildings");
+        var row = document.getElementById("tblRow");
+        while (row.firstChild) {
+            row.removeChild(row.firstChild);
+        }
+
+        buildings = sessionStorage.getItem("buildings");
+        document.getElementById("tblBuildings").style.width = eval(buildings * 410) + "px";
+
+        for (i = 0; i < buildings; i++) {
+
+            var td = document.createElement('td');
+            td.setAttribute("id", "td_" + i);
+            td.setAttribute("valign", "bottom");
+            td.setAttribute("height", "100%");
+            td.setAttribute("width", "100%");
+            td.innerHTML = "<iframe src=\"Elev.html\" style=\"height:100%;width:100%;border-style:none\"></iframe>";
+
+            row.appendChild(td);
+        }
+    }
+
+
+
+</script>
+</html>
